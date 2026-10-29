@@ -219,3 +219,9 @@
   .soundscape.waiting .sound-label { display: inline; }
   .soundscape.waiting .sound-main { padding: 12px 16px 12px 14px; }
 }
+
+/* Booking: the long date strip must scroll inside its column, never widen the page */
+.wizard { grid-template-columns: 300px minmax(0, 1fr); }
+.wizard > div, .step-panel { min-width: 0; }
+.date-strip { max-width: 100%; }
+@media (max-width: 900px) { .wizard { grid-template-columns: minmax(0, 1fr); } }

@@ -11,6 +11,8 @@ const TYPES = [
   ['day', 'pool', 'Pool day-out', 'Pool access with food packages'],
 ];
 const SLOTS = ['7:00 AM', '9:00 AM', '11:00 AM', '1:00 PM', '3:00 PM', '5:00 PM', '7:00 PM', '9:00 PM'];
+// Demo availability: a couple of slots show as fully booked each day
+const isFull = (slotIdx, dayIdx) => (slotIdx + dayIdx) % 5 === 3;
 const STEPS = ['Destination', 'Reservation', 'Date & guests', 'Your details'];
 
 export default function Booking() {
@@ -18,7 +20,7 @@ export default function Booking() {
   const [step, setStep] = useState(qs.get('loc') ? 1 : 0);
   const [done, setDone] = useState(false);
   const [f, setF] = useState({
-    loc: qs.get('loc') || '', type: qs.get('type') || 'table', date: 0, slot: '1:00 PM',
+    loc: qs.get('loc') || '', type: qs.get('type') || 'table', date: 0, slot: '3:00 PM',
     guests: Number(String(qs.get('guests') || '4').replace('+', '')), units: 1, nights: 1,
     name: '', phone: '', email: '', notes: '', ack: 'whatsapp',
   });
@@ -126,7 +128,7 @@ export default function Booking() {
                   {days.map((d, i) => {
                     const we = d.getDay() === 0 || d.getDay() === 6;
                     return (
-                      <button type="button" key={i} className={`date-chip ${f.date === i ? 'on' : ''} ${we ? 'peak' : ''}`} onClick={() => set('date', i)}>
+                      <button type="button" key={i} className={`date-chip ${f.date === i ? 'on' : ''} ${we ? 'peak' : ''}`} onClick={() => setF(s => ({ ...s, date: i, slot: isFull(SLOTS.indexOf(s.slot), i) ? SLOTS.find((_, k) => !isFull(k, i)) : s.slot }))}>
                         <small>{d.toLocaleDateString('en-IN', { weekday: 'short' })}</small>
                         <span className="d">{d.getDate()}</span>
                         <small>{d.toLocaleDateString('en-IN', { month: 'short' })}</small>
@@ -136,10 +138,10 @@ export default function Booking() {
                 </div>
                 {f.type !== 'room' ? (
                   <>
-                    <div className="label muted mt-32" style={{ marginBottom: 12 }}>Preferred time slot · {loc?.stats.slot || '2 hrs'} each</div>
+                    <div className="label muted mt-32" style={{ marginBottom: 12 }}>{loc?.stats.slot === 'Nightly' ? 'Preferred arrival time' : `Preferred time slot · ${loc?.stats.slot || '2 hrs'} each`}</div>
                     <div className="slot-grid">
                       {SLOTS.map((s, i) => {
-                        const full = (i + f.date) % 5 === 3;
+                        const full = isFull(i, f.date);
                         return <button type="button" key={s} disabled={full} className={`slot ${f.slot === s ? 'on' : ''} ${full ? 'full' : ''}`} onClick={() => set('slot', s)}>{s}</button>;
                       })}
                     </div>
