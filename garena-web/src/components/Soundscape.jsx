@@ -4,8 +4,9 @@ import { useLocation } from 'react-router-dom';
 /* Live ambient soundscapes synthesised with the Web Audio API — no audio files needed. */
 
 const MODES = {
-  calm: 'Calm lake', rain: 'Soft rain', waves: 'Ocean waves', forest: 'Forest dawn', pool: 'Poolside',
-  waterfall: 'Hill waterfall', cafe: 'Restaurant', party: 'Celebration',
+  calm: 'Calm lake', rain: 'Soft rain', waves: 'Ocean waves', forest: 'Forest dawn',
+  waterfall: 'Hill waterfall',
+  fields: 'Golden fields', cove: 'Sunrise cove',
 };
 
 function noiseBuffer(ctx, type) {
@@ -151,34 +152,6 @@ function buildForest(ctx, out, bufs) {
   return () => { nodes.forEach(n => n.stop()); timers.forEach(clearTimeout); };
 }
 
-function buildPool(ctx, out, bufs) {
-  const nodes = [], timers = [];
-  // Water lapping against the pool edge
-  const lp = filter(ctx, 'lowpass', 900), g = gain(ctx, 0.12);
-  lp.connect(g).connect(out); nodes.push(loopNoise(ctx, bufs.brown, lp));
-  const lfo = ctx.createOscillator(), lg = gain(ctx, 0.08);
-  lfo.frequency.value = 0.6; lfo.connect(lg).connect(g.gain); lfo.start(); nodes.push(lfo);
-  // Splashes
-  const splash = () => {
-    const t = ctx.currentTime, s = ctx.createBufferSource(); s.buffer = bufs.white;
-    const bp = filter(ctx, 'bandpass', 900 + Math.random() * 1500, 0.8), e = gain(ctx, 0);
-    e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(0.35, t + 0.03); e.gain.exponentialRampToValueAtTime(0.001, t + 0.7);
-    s.connect(bp).connect(e).connect(out); s.start(t, Math.random() * 3); s.stop(t + 0.75);
-    timers.push(setTimeout(splash, 2500 + Math.random() * 5000));
-  };
-  timers.push(setTimeout(splash, 1200));
-  // Water droplets
-  const drip = () => {
-    const t = ctx.currentTime, o = ctx.createOscillator(), e = gain(ctx, 0);
-    o.frequency.setValueAtTime(700 + Math.random() * 600, t); o.frequency.exponentialRampToValueAtTime(1800, t + 0.05);
-    e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(0.05, t + 0.005); e.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
-    o.connect(e).connect(out); o.start(t); o.stop(t + 0.1);
-    timers.push(setTimeout(drip, 400 + Math.random() * 1800));
-  };
-  drip();
-  return () => { nodes.forEach(n => n.stop()); timers.forEach(clearTimeout); };
-}
-
 function buildWaterfall(ctx, out, bufs) {
   const nodes = [];
   const a = filter(ctx, 'bandpass', 1100, 0.35), ga = gain(ctx, 0.28);
@@ -255,17 +228,78 @@ function buildParty(ctx, out, bufs) {
   return () => { nodes.forEach(n => n.stop()); timers.forEach(clearTimeout); };
 }
 
-const BUILDERS = { calm: buildCalm, rain: buildRain, waves: buildWaves, forest: buildForest, pool: buildPool, waterfall: buildWaterfall, cafe: buildCafe, party: buildParty };
+/* Kamareddy — golden fields at dusk: crickets, warm breeze, a far-off temple bell */
+function buildFields(ctx, out, bufs) {
+  const nodes = [], timers = [];
+  const bp = filter(ctx, 'bandpass', 500, 0.5), g = gain(ctx, 0.07);
+  bp.connect(g).connect(out); nodes.push(loopNoise(ctx, bufs.brown, bp));
+  const lfo = ctx.createOscillator(), lg = gain(ctx, 0.04);
+  lfo.frequency.value = 0.12; lfo.connect(lg).connect(g.gain); lfo.start(); nodes.push(lfo);
+  const cricket = () => {
+    const t = ctx.currentTime, f = 4200 + Math.random() * 900, pulses = 3 + Math.floor(Math.random() * 3);
+    for (let k = 0; k < pulses; k++) {
+      const st = t + k * 0.055, o = ctx.createOscillator(), e = gain(ctx, 0);
+      o.frequency.value = f;
+      e.gain.setValueAtTime(0, st); e.gain.linearRampToValueAtTime(0.012, st + 0.008); e.gain.linearRampToValueAtTime(0, st + 0.035);
+      o.connect(e).connect(out); o.start(st); o.stop(st + 0.04);
+    }
+    timers.push(setTimeout(cricket, 350 + Math.random() * 900));
+  };
+  cricket();
+  const bell = () => {
+    const t = ctx.currentTime;
+    [392, 392 * 2.76, 392 * 5.4].forEach((f, i) => {
+      const o = ctx.createOscillator(), e = gain(ctx, 0);
+      o.frequency.value = f;
+      e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime([0.025, 0.008, 0.004][i], t + 0.01); e.gain.exponentialRampToValueAtTime(0.0003, t + 5);
+      o.connect(e).connect(out); o.start(t); o.stop(t + 5.1);
+    });
+    timers.push(setTimeout(bell, 14000 + Math.random() * 10000));
+  };
+  timers.push(setTimeout(bell, 2500));
+  return () => { nodes.forEach(n => n.stop()); timers.forEach(clearTimeout); };
+}
+
+/* Revupolavaram — sunrise cove: small calm waves, sea breeze and a soft island marimba */
+function buildCove(ctx, out, bufs) {
+  const nodes = [], timers = [];
+  const lp = filter(ctx, 'lowpass', 1100), g = gain(ctx, 0.05);
+  lp.connect(g).connect(out); nodes.push(loopNoise(ctx, bufs.brown, lp));
+  const ripple = () => {
+    const t = ctx.currentTime, dur = 3.5 + Math.random() * 1.5;
+    g.gain.cancelScheduledValues(t); g.gain.setValueAtTime(g.gain.value, t);
+    g.gain.linearRampToValueAtTime(0.22, t + dur * 0.4); g.gain.linearRampToValueAtTime(0.05, t + dur);
+    timers.push(setTimeout(ripple, dur * 1000));
+  };
+  ripple();
+  const scale = [392, 440, 523.25, 587.33, 659.25, 783.99];
+  let i = 0;
+  const marimba = () => {
+    const t = ctx.currentTime, f = scale[(i += 1 + Math.floor(Math.random() * 2)) % scale.length];
+    [1, 4].forEach((m, k) => {
+      const o = ctx.createOscillator(), e = gain(ctx, 0);
+      o.frequency.value = f * m;
+      e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(k ? 0.006 : 0.03, t + 0.005); e.gain.exponentialRampToValueAtTime(0.0004, t + (k ? 0.25 : 1.2));
+      o.connect(e).connect(out); o.start(t); o.stop(t + 1.3);
+    });
+    timers.push(setTimeout(marimba, Math.random() < 0.3 ? 1800 + Math.random() * 1500 : 420));
+  };
+  timers.push(setTimeout(marimba, 1000));
+  return () => { nodes.forEach(n => n.stop()); timers.forEach(clearTimeout); };
+}
+
+const BUILDERS = { calm: buildCalm, rain: buildRain, waves: buildWaves, forest: buildForest, waterfall: buildWaterfall, cafe: buildCafe, party: buildParty, fields: buildFields, cove: buildCove };
 
 // Each page has its own mood
 const PAGE_SOUND = {
-  '/': 'calm', '/g-arena': 'forest', '/le-comfort': 'waves', '/destinations': 'waves', '/dining': 'cafe',
-  '/celebrations': 'party', '/packages': 'pool', '/booking': 'calm', '/gallery': 'forest', '/our-story': 'forest',
+  // Info pages stay peaceful; only the brand and location pages carry a themed sound
+  '/': 'calm', '/g-arena': 'forest', '/le-comfort': 'waves', '/destinations': 'waves', '/dining': 'calm',
+  '/celebrations': 'calm', '/packages': 'calm', '/booking': 'calm', '/gallery': 'calm', '/our-story': 'calm',
   '/contact': 'calm', '/legal': 'calm',
 };
 const LOCATION_SOUND = {
-  suryapet: 'pool', kamareddy: 'pool', palamaneru: 'forest', nagari: 'waterfall', dvsatram: 'forest',
-  kuppam: 'rain', mypadu: 'waves', revupolavaram: 'waves',
+  suryapet: 'calm', kamareddy: 'fields', palamaneru: 'forest', nagari: 'waterfall', dvsatram: 'waves',
+  kuppam: 'rain', mypadu: 'waves', revupolavaram: 'cove',
 };
 
 function modeFor(path) {
