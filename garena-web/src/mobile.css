@@ -213,3 +213,9 @@
   .filters:has(.chip) { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter); }
   .filters:has(.chip) .chip { flex: none; }
 }
+
+/* Sound waiting for the first tap: keep the label visible on phones too */
+@media (max-width: 600px) {
+  .soundscape.waiting .sound-label { display: inline; }
+  .soundscape.waiting .sound-main { padding: 12px 16px 12px 14px; }
+}

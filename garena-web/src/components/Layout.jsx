@@ -192,23 +192,20 @@ function Footer() {
 
 function Cursor() {
   const ring = useRef(), dot = useRef();
-  const [label, setLabel] = useState('');
   useEffect(() => {
     if (matchMedia('(hover: none)').matches) return;
     let x = innerWidth / 2, y = innerHeight / 2, rx = x, ry = y, id;
     const move = e => { x = e.clientX; y = e.clientY; dot.current.style.transform = `translate(${x}px,${y}px)`; };
     const over = e => {
-      const c = e.target.closest('[data-cursor]');
-      const a = e.target.closest('a, button, select, input, .choice, .chip, .date-chip, .slot');
-      ring.current.classList.toggle('big', !!c);
-      ring.current.classList.toggle('hover', !c && !!a);
-      setLabel(c ? c.dataset.cursor : '');
+      // Only a subtle hover ring — no large labelled bubble
+      const a = e.target.closest('a, button, select, input, .choice, .chip, .date-chip, .slot, [data-cursor]');
+      ring.current.classList.toggle('hover', !!a);
     };
     const loop = () => { rx += (x - rx) * .16; ry += (y - ry) * .16; ring.current.style.transform = `translate(${rx}px,${ry}px)`; id = requestAnimationFrame(loop); };
     addEventListener('mousemove', move); addEventListener('mouseover', over); loop();
     return () => { removeEventListener('mousemove', move); removeEventListener('mouseover', over); cancelAnimationFrame(id); };
   }, []);
-  return (<><div className="cursor" ref={ring}><span>{label}</span></div><div className="cursor-dot" ref={dot} /></>);
+  return (<><div className="cursor" ref={ring} /><div className="cursor-dot" ref={dot} /></>);
 }
 
 function Preloader() {

@@ -310,23 +310,32 @@ function modeFor(path) {
 
 export default function Soundscape() {
   const { pathname } = useLocation();
-  const [on, setOn] = useState(false);
+  // Sound is on by default; a visitor who turns it off stays off on later visits
+  const [on, setOn] = useState(() => { try { return localStorage.getItem('ga-sound') !== 'off'; } catch { return true; } });
+  // Browsers only allow audio after the first tap/click/key press on the page
+  const [unlocked, setUnlocked] = useState(false);
   const [mode, setMode] = useState(() => modeFor(pathname));
-  const [hint, setHint] = useState(false);
-  const ctxRef = useRef(), masterRef = useRef(), stopRef = useRef(), bufs = useRef();
+  const ctxRef = useRef(), masterRef = useRef(), stopRef = useRef(), bufs = useRef(), unlockedAt = useRef(0);
 
-  // Invite the visitor to turn sound on shortly after landing
   useEffect(() => {
-    const t = setTimeout(() => setHint(true), 3500);
-    const t2 = setTimeout(() => setHint(false), 14000);
-    return () => { clearTimeout(t); clearTimeout(t2); };
-  }, []);
+    if (unlocked) return;
+    const unlock = () => { unlockedAt.current = Date.now(); setUnlocked(true); };
+    const evs = ['pointerdown', 'touchstart', 'keydown'];
+    evs.forEach(e => window.addEventListener(e, unlock, { once: true, passive: true }));
+    return () => evs.forEach(e => window.removeEventListener(e, unlock));
+  }, [unlocked]);
+
+  const toggle = () => {
+    const next = !on;
+    setOn(next);
+    try { localStorage.setItem('ga-sound', next ? 'on' : 'off'); } catch {}
+  };
 
   // Every page change crossfades to that page's sound (a manual pick lasts until the next page)
   useEffect(() => { setMode(modeFor(pathname)); }, [pathname]);
 
   useEffect(() => {
-    if (!on) return;
+    if (!on || !unlocked) return;
     if (!ctxRef.current) {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
       const master = ctx.createGain(); master.gain.value = 0;
@@ -348,7 +357,7 @@ export default function Soundscape() {
       setTimeout(() => { stop(); bus.disconnect(); }, 600);
     };
     return () => stopRef.current?.();
-  }, [on, mode]);
+  }, [on, mode, unlocked]);
 
   // Pause when the tab is hidden
   useEffect(() => {
@@ -357,19 +366,20 @@ export default function Soundscape() {
     return () => document.removeEventListener('visibilitychange', v);
   }, [on]);
 
-  const pick = m => { setMode(m); setOn(true); setHint(false); };
+  const pick = m => { setMode(m); if (!on) toggle(); };
+  const waiting = on && !unlocked;
 
   return (
-    <div className={`soundscape ${on ? 'playing' : ''}`}>
-      {hint && !on && (
+    <div className={`soundscape ${on && unlocked ? 'playing' : ''} ${waiting ? 'waiting' : ''}`}>
+      {waiting && (
         <div className="sound-hint">
-          <b>Best experienced with sound</b>
-          <span>Hear the {MODES[mode].toLowerCase()} of our destinations.</span>
+          <b>Sound is on</b>
+          <span>Tap anywhere to hear the {MODES[mode].toLowerCase()}.</span>
         </div>
       )}
-      <button className="sound-main" onClick={() => { setOn(!on); setHint(false); }} aria-label={on ? 'Mute ambient sound' : 'Play ambient sound'} data-cursor={on ? 'Mute' : 'Listen'}>
+      <button className="sound-main" onClick={() => { if (!waiting && Date.now() - unlockedAt.current > 500) toggle(); }} aria-label={on ? 'Mute ambient sound' : 'Play ambient sound'} data-cursor={on ? 'Mute' : 'Listen'}>
         <span className="eq"><i /><i /><i /><i /><i /></span>
-        <span className="sound-label">{on ? MODES[mode] : 'Sound off'}</span>
+        <span className="sound-label">{waiting ? 'Tap for sound' : on ? MODES[mode] : 'Sound off'}</span>
       </button>
       <div className="sound-modes">
         {Object.entries(MODES).map(([k, t]) => (

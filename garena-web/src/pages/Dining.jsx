@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PageHero, Eyebrow, Split, Pic, Btn, Marquee } from '../components/ui';
 import { CtaBand } from '../components/Sections';
 import Icon from '../components/Icon';
@@ -137,7 +137,7 @@ export default function Dining() {
               </div>
               <p className="muted mt-24" style={{ fontSize: 13 }}>Sample menu. Dishes and prices vary by destination and season. All prices exclude GST.</p>
             </div>
-            <TableBooker />
+            <div id="book-table" style={{ scrollMarginTop: 100 }}><TableBooker /></div>
           </div>
         </div>
       </section>
