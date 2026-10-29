@@ -1,0 +1,112 @@
+/* ==========================================================================
+   Per-destination offering layouts
+   ========================================================================== */
+.oc-section.on-dark .facility-strip .yes { background: rgba(255, 255, 255, .1); color: #fff; }
+.oc-section.on-dark .facility-strip .no { color: rgba(255, 255, 255, .5); border-color: rgba(255, 255, 255, .2); }
+
+/* Kamareddy — expanding accordion */
+.oc-acc { display: flex; gap: 10px; height: clamp(440px, 64vh, 600px); }
+.oc-acc-panel { position: relative; flex: 1; min-width: 0; border-radius: var(--radius); overflow: hidden; color: #fff; text-align: left; transition: flex .9s var(--ease); isolation: isolate; }
+.oc-acc-panel.on { flex: 5; }
+.oc-acc-panel img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: transform 1.2s var(--ease); }
+.oc-acc-panel::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0, 0, 0, .25), rgba(0, 0, 0, .75)); }
+.oc-acc-panel.on img { transform: scale(1.04); }
+.oc-acc-num { position: absolute; top: 18px; left: 18px; font-family: var(--f-display); font-style: italic; font-size: 26px; color: var(--accent); }
+.oc-acc-v { position: absolute; left: 50%; bottom: 24px; transform: translateX(-50%) rotate(180deg); writing-mode: vertical-rl; font-family: var(--f-display); font-size: 24px; white-space: nowrap; transition: opacity .4s; }
+.oc-acc-panel.on .oc-acc-v { opacity: 0; }
+.oc-acc-body { position: absolute; left: 28px; right: 28px; bottom: 28px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; opacity: 0; transform: translateY(20px); transition: all .6s var(--ease) .15s; }
+.oc-acc-panel.on .oc-acc-body { opacity: 1; transform: none; }
+
+/* Palamaneru — sticky stacking cards */
+.oc-stack { display: grid; gap: 22px; padding-bottom: 40px; }
+.oc-stack-card { position: sticky; display: grid; grid-template-columns: 1.1fr 1fr; min-height: 440px; border-radius: var(--radius-lg); overflow: hidden; background: #fff; border: 1px solid var(--line); box-shadow: 0 -20px 50px -30px rgba(0, 0, 0, .25); }
+.oc-stack-card:nth-child(even) { background: var(--soft); }
+.oc-stack-img { position: relative; overflow: hidden; }
+.oc-stack-img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.oc-stack-body { padding: clamp(24px, 3.5vw, 48px); display: flex; flex-direction: column; justify-content: center; position: relative; }
+.oc-big-num { position: absolute; top: 16px; right: 28px; font-family: var(--f-display); font-size: 110px; line-height: 1; color: transparent; -webkit-text-stroke: 1px var(--accent); opacity: .7; }
+
+/* Nagari — dark film strip */
+.oc-sec-film { background: linear-gradient(180deg, #1C160C, color-mix(in srgb, var(--primary) 60%, #000)); color: #fff; }
+div.oc-film { display: flex; gap: 22px; overflow-x: auto; padding: 10px 2px 26px; scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: var(--accent) transparent; }
+.oc-film-card { flex: none; width: clamp(260px, 26vw, 360px); text-align: left; color: #fff; scroll-snap-align: start; position: relative; }
+.oc-film-num { position: absolute; top: -6px; right: 10px; z-index: 2; font-family: var(--f-display); font-size: 90px; line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .55); }
+.oc-film-img { display: block; aspect-ratio: 3/4; border-radius: 6px; overflow: hidden; box-shadow: 0 0 0 8px #0d0a05, 0 0 0 9px rgba(255, 255, 255, .12); }
+.oc-film-img img { width: 100%; height: 100%; object-fit: cover; filter: saturate(.85) contrast(1.05); transition: transform 1s var(--ease), filter .6s; }
+.oc-film-card:hover .oc-film-img img { transform: scale(1.06); filter: none; }
+.oc-film-meta { display: flex; flex-direction: column; padding: 20px 4px 0; }
+
+/* DV Satram — editorial list with floating image */
+.oc-list { position: relative; border-top: 1px solid var(--line); }
+.oc-list-row { width: 100%; display: grid; grid-template-columns: 70px 1fr auto 56px; align-items: center; gap: 24px; padding: 26px 0; border-bottom: 1px solid var(--line); text-align: left; transition: padding .5s var(--ease), color .3s; }
+.oc-list-row:hover { padding-left: 18px; color: var(--primary); }
+.oc-list-n { font-family: var(--f-display); font-style: italic; font-size: 26px; color: var(--accent); }
+.oc-list-t { font-family: var(--f-display); font-size: clamp(2rem, 4.4vw, 4.4rem); line-height: 1; }
+.oc-list-s { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.oc-list-go { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 1px var(--line); transition: all .5s var(--ease); }
+.oc-list-go svg { width: 18px; }
+.oc-list-row:hover .oc-list-go { background: var(--primary); color: #fff; transform: rotate(45deg); }
+.oc-list-float { position: fixed; left: 0; top: 0; width: 280px; aspect-ratio: 4/5; border-radius: 20px; overflow: hidden; pointer-events: none; z-index: 50; opacity: 0; transition: opacity .4s, transform .25s var(--ease); box-shadow: var(--shadow); }
+.oc-list-float.on { opacity: 1; }
+.oc-list-float img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .4s; }
+.oc-list-float img.on { opacity: 1; }
+
+/* Kuppam — boutique tabs */
+.oc-tabs { display: grid; grid-template-columns: 380px 1fr; gap: 20px; min-height: 560px; }
+.oc-tabs-nav { display: flex; flex-direction: column; gap: 8px; }
+.oc-tabs-nav button { display: grid; grid-template-columns: 48px 1fr 20px; gap: 14px; align-items: center; padding: 14px 16px; border-radius: 18px; text-align: left; border: 1px solid var(--line); background: #fff; transition: all .4s var(--ease); }
+.oc-tabs-nav button b { display: block; font-family: var(--f-display); font-size: 22px; font-weight: 400; line-height: 1.1; }
+.oc-tabs-nav button small { color: var(--muted); font-size: 12.5px; }
+.oc-tabs-nav button > svg { opacity: 0; transition: all .4s var(--ease); transform: translateX(-6px); }
+.oc-tabs-nav button.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+.oc-tabs-nav button.on small { color: rgba(255, 255, 255, .7); }
+.oc-tabs-nav button.on > svg { opacity: 1; transform: none; }
+.oc-tab-ic { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: var(--soft); color: var(--primary); }
+.oc-tab-ic svg { width: 22px; }
+.oc-tabs-panel { position: relative; border-radius: var(--radius-lg); overflow: hidden; min-height: 520px; }
+.oc-tabs-panel > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.06); transition: opacity .8s var(--ease), transform 1.4s var(--ease); }
+.oc-tabs-panel > img.on { opacity: 1; transform: none; }
+.oc-tabs-card { position: absolute; right: 20px; bottom: 20px; width: min(400px, calc(100% - 40px)); background: rgba(251, 249, 243, .94); backdrop-filter: blur(14px); border-radius: 24px; padding: 26px; animation: stepIn .6s var(--ease); }
+
+/* Mypadu — beach postcards */
+.oc-sec-postcards { background: linear-gradient(180deg, #F3E7D2, #E9DCC4); }
+.oc-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px 26px; padding: 10px 0 20px; }
+.oc-postcard { position: relative; width: clamp(240px, 22vw, 290px); background: #FFFDF8; padding: 12px 12px 0; border-radius: 6px; box-shadow: 0 18px 40px -18px rgba(70, 50, 20, .45); text-align: left; transition: transform .6s var(--ease), box-shadow .6s, opacity 1.1s var(--ease); }
+.oc-postcard.rv { transform: rotate(var(--r)) translateY(40px); }
+.oc-postcard.rv.in { transform: rotate(var(--r)); }
+.oc-postcard.rv.in:hover { transform: rotate(0) translateY(-10px) scale(1.04); box-shadow: 0 30px 60px -20px rgba(70, 50, 20, .55); z-index: 2; }
+.oc-pc-img { display: block; aspect-ratio: 1; overflow: hidden; border-radius: 3px; }
+.oc-pc-img img { width: 100%; height: 100%; object-fit: cover; }
+.oc-pc-cap { display: flex; flex-direction: column; padding: 14px 4px 18px; }
+.oc-pc-title { font-family: var(--f-display); font-style: italic; font-size: 26px; line-height: 1.1; color: var(--primary); }
+.oc-pc-sub { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+.oc-stamp { position: absolute; top: 22px; right: 22px; z-index: 2; width: 52px; height: 60px; display: grid; place-items: center; background: var(--paper); color: var(--primary); border: 2px dashed var(--accent); border-radius: 4px; transform: rotate(6deg); }
+.oc-stamp svg { width: 24px; }
+
+/* Revupolavaram — sunrise arches */
+.oc-sec-arches { background: linear-gradient(180deg, #0F2A40 0%, #1B3F5C 45%, #8C5A4A 85%, #E59A63 100%); color: #fff; }
+div.oc-arches { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 22px; align-items: end; }
+.oc-arch { display: flex; flex-direction: column; align-items: center; text-align: center; color: #fff; position: relative; }
+.oc-arch:nth-child(odd) { margin-bottom: 40px; }
+.oc-arch-img { display: block; width: 100%; aspect-ratio: 3/5; border-radius: 999px 999px 18px 18px; overflow: hidden; border: 1px solid rgba(255, 255, 255, .25); padding: 6px; }
+.oc-arch-img img { width: 100%; height: 100%; object-fit: cover; border-radius: 999px 999px 14px 14px; transition: transform 1.2s var(--ease); }
+.oc-arch:hover .oc-arch-img img { transform: scale(1.08); }
+.oc-arch-sun { margin-top: -26px; position: relative; z-index: 2; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: #F0A868; color: #2a1608; box-shadow: 0 0 0 8px rgba(240, 168, 104, .25); transition: transform .6s var(--ease); }
+.oc-arch:hover .oc-arch-sun { transform: translateY(-10px); }
+.oc-arch-sun svg { width: 22px; }
+.oc-arch .ot-short { opacity: .75; }
+
+@media (max-width: 900px) {
+  .oc-acc { flex-direction: column; height: auto; }
+  .oc-acc-panel { min-height: 90px; flex: none; }
+  .oc-acc-panel.on { min-height: 340px; }
+  .oc-acc-v { writing-mode: horizontal-tb; transform: none; left: 70px; bottom: auto; top: 30px; }
+  .oc-stack-card { grid-template-columns: 1fr; position: relative; top: 0 !important; }
+  .oc-stack-img { min-height: 220px; }
+  .oc-list-row { grid-template-columns: 44px 1fr 44px; }
+  .oc-list-s, .oc-list-float { display: none; }
+  .oc-tabs { grid-template-columns: 1fr; }
+  .oc-tabs-panel { min-height: 460px; }
+  .oc-arch:nth-child(odd) { margin-bottom: 0; }
+  div.oc-arches { grid-template-columns: repeat(2, 1fr); }
+}
