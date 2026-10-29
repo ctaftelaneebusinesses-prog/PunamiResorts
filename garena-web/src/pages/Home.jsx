@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from '../components/Icon';
-import { Btn, Eyebrow, Split, Pic, BgVideo, Marquee, RotateBadge } from '../components/ui';
+import { Btn, Eyebrow, Split, BgVideo, RotateBadge } from '../components/ui';
 import BookingBar from '../components/BookingBar';
-import MapConstellation from '../components/MapConstellation';
-import { PackagesGrid, Testimonials, CtaBand, HorizontalDestinations } from '../components/Sections';
+import { Testimonials, CtaBand, HorizontalDestinations } from '../components/Sections';
 import { BRANDS, LOCATIONS, VID, img } from '../data';
 
 function Counter({ to, suffix = '' }) {
@@ -25,37 +24,26 @@ function Counter({ to, suffix = '' }) {
 }
 
 const EXPERIENCES = [
-  { k: 'pool', t: 'Pools & Day-outs', img: 'poolAerial', d: 'Lagoon pools, splash zones and shaded cabanas — open from sunrise, with lifeguards on every deck.', tags: ['Lagoon & infinity pools', 'Kids splash zone', 'Cabanas', 'Lifeguard on duty'] },
-  { k: 'dine', t: 'Dining & Feasts', img: 'thaliTop', d: 'Andhra thalis, coastal seafood and wood-fire grills, served buffet-style or à la carte under the open sky.', tags: ['Veg & Non-Veg', 'Buffet & à la carte', 'Live counters', 'Event menus'] },
-  { k: 'cele', t: 'Celebrations', img: 'fairyLights', d: 'Birthdays, anniversaries, engagements and corporate days — with décor, catering and DJ handled end to end.', tags: ['Up to 500 guests', 'Theme décor', 'DJ & sound', 'Catering packages'] },
-  { k: 'stay', t: 'Boutique Stays', img: 'roomDark', d: 'From forest cottages to sea-facing suites — calm, considered rooms for a night or a long weekend.', tags: ['AC & Non-AC rooms', 'Suites & cottages', 'Breakfast included', '24×7 front desk'] },
-  { k: 'play', t: 'Play & Wellness', img: 'playground', d: 'Play zones for little ones, games for the grown-ups and a quiet spa for everyone who needs a pause.', tags: ["Kids' play area", 'Indoor & outdoor games', 'Spa', 'Gym'] },
+  { k: 'pool', to: '/packages', short: 'Lagoon pools & cabanas', t: 'Pools & Day-outs', img: 'poolAerial', d: 'Lagoon pools, splash zones and shaded cabanas — open from sunrise, with lifeguards on every deck.', tags: ['Lagoon & infinity pools', 'Kids splash zone', 'Cabanas', 'Lifeguard on duty'] },
+  { k: 'dine', to: '/dining', short: 'Andhra thalis & grills', t: 'Dining & Feasts', img: 'thaliTop', d: 'Andhra thalis, coastal seafood and wood-fire grills, served buffet-style or à la carte under the open sky.', tags: ['Veg & Non-Veg', 'Buffet & à la carte', 'Live counters', 'Event menus'] },
+  { k: 'cele', to: '/celebrations', short: 'Up to 500 guests', t: 'Celebrations', img: 'fairyLights', d: 'Birthdays, anniversaries, engagements and corporate days — with décor, catering and DJ handled end to end.', tags: ['Up to 500 guests', 'Theme décor', 'DJ & sound', 'Catering packages'] },
+  { k: 'stay', to: '/le-comfort', short: 'Suites & cottages', t: 'Boutique Stays', img: 'roomDark', d: 'From forest cottages to sea-facing suites — calm, considered rooms for a night or a long weekend.', tags: ['AC & Non-AC rooms', 'Suites & cottages', 'Breakfast included', '24×7 front desk'] },
+  { k: 'play', to: '/destinations', short: 'Play zones & spa', t: 'Play & Wellness', img: 'playground', d: 'Play zones for little ones, games for the grown-ups and a quiet spa for everyone who needs a pause.', tags: ["Kids' play area", 'Indoor & outdoor games', 'Spa', 'Gym'] },
 ];
 
 function Experiences() {
-  const [on, setOn] = useState(0);
-  const refs = useRef([]);
-  useEffect(() => {
-    const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && setOn(+e.target.dataset.i)), { rootMargin: '-45% 0px -45% 0px' });
-    refs.current.forEach(r => r && io.observe(r));
-    return () => io.disconnect();
-  }, []);
   return (
-    <div className="exp">
-      <div className="exp-media">
-        {EXPERIENCES.map((e, i) => <img key={e.k} src={img(e.img, 1400)} alt={e.t} className={i === on ? 'on' : ''} />)}
-        <div className="exp-count">0{on + 1} / 0{EXPERIENCES.length}</div>
-      </div>
-      <div className="exp-items">
-        {EXPERIENCES.map((e, i) => (
-          <div key={e.k} ref={r => (refs.current[i] = r)} data-i={i} className={`exp-item ${i === on ? 'on' : ''}`}>
-            <span className="k">0{i + 1} — EXPERIENCE</span>
-            <h3>{e.t}</h3>
-            <p className="lead">{e.d}</p>
-            <ul>{e.tags.map(t => <li key={t}>{t}</li>)}</ul>
-          </div>
-        ))}
-      </div>
+    <div className="xp-row">
+      {EXPERIENCES.map((e, i) => (
+        <Link key={e.k} to={e.to} className="xp-card rv" style={{ '--d': `${i * .06}s` }} data-cursor="View">
+          <img src={img(e.img, 700)} alt="" loading="lazy" />
+          <span className="xp-body">
+            <span className="xp-k">0{i + 1}</span>
+            <span className="xp-t">{e.t}</span>
+            <span className="xp-d">{e.short}</span>
+          </span>
+        </Link>
+      ))}
     </div>
   );
 }
@@ -84,33 +72,27 @@ export default function Home() {
             <div className="scroll-cue hide-sm" style={{ justifySelf: 'end' }}><i /> Scroll to explore</div>
           </div>
           <div className="mt-32" style={{ opacity: heroIn ? 1 : 0, transform: heroIn ? 'none' : 'translateY(30px)', transition: 'all 1.2s cubic-bezier(.22,1,.36,1) .7s' }}>
-            <BookingBar />
+            <div className="hero-bar-desk"><BookingBar /></div>
+            <div className="hero-m-cta">
+              <Btn to="/booking" variant="light">Reserve your visit</Btn>
+              <Link to="/destinations" className="btn btn-outline btn-plain">Explore 8 destinations</Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* STATEMENT */}
-      <section className="section">
-        <div className="container">
-          <Eyebrow>Welcome</Eyebrow>
-          <p className="statement mt-32 rv">
-            Two brands, one philosophy —
-            <span className="inline-img"><img src={img('poolPalms', 300)} alt="" /></span>
-            open spaces, honest food and
-            <span className="inline-img"><img src={img('friendsDining', 300)} alt="" /></span>
-            <span className="ghost">warm hospitality that makes every visit</span> feel like coming home.
-          </p>
-          <div className="stats-row">
-            <div className="stat rv"><div className="num"><Counter to={12} suffix="+" /></div><p>Years of hospitality</p></div>
-            <div className="stat rv" style={{ '--d': '.1s' }}><div className="num"><Counter to={8} /></div><p>Destinations across 2 states</p></div>
-            <div className="stat rv" style={{ '--d': '.2s' }}><div className="num"><Counter to={350} suffix="K" /></div><p>Guests welcomed</p></div>
-            <div className="stat rv" style={{ '--d': '.3s' }}><div className="num"><Counter to={4800} suffix="+" /></div><p>Celebrations hosted</p></div>
-          </div>
+      {/* STATS STRIP */}
+      <div className="container">
+        <div className="stat-strip rv">
+          <div><b><Counter to={12} suffix="+" /></b><span>Years</span></div>
+          <div><b><Counter to={8} /></b><span>Destinations</span></div>
+          <div><b><Counter to={350} suffix="K" /></b><span>Guests</span></div>
+          <div><b><Counter to={4800} suffix="+" /></b><span>Celebrations</span></div>
         </div>
-      </section>
+      </div>
 
       {/* BRAND PORTAL */}
-      <section className="section-sm" style={{ paddingTop: 0 }}>
+      <section className="section-sm">
         <div className="container">
           <div className="section-head">
             <div><Eyebrow>Choose your escape</Eyebrow><Split text="Two worlds. [[One]] welcome." className="display-m" /></div>
@@ -156,11 +138,8 @@ export default function Home() {
         } />
       </section>
 
-      {/* MAP */}
-      <section className="section bg-forest"><div className="container"><MapConstellation /></div></section>
-
       {/* EXPERIENCES */}
-      <section className="section">
+      <section className="section-sm">
         <div className="container">
           <div className="section-head">
             <div><Eyebrow>Experiences</Eyebrow><Split text="One day. [[Many]] ways to spend it." className="display-m" /></div>
@@ -170,41 +149,8 @@ export default function Home() {
         </div>
       </section>
 
-      <Marquee items={['Pool days', 'Family feasts', 'Birthdays', 'Sea-facing suites', 'Corporate retreats', 'Forest cottages', 'Sunset dinners']} />
-
-      {/* PACKAGES */}
-      <section className="section">
-        <div className="container">
-          <div className="section-head">
-            <div><Eyebrow>Packages</Eyebrow><Split text="Curated, all-inclusive [[escapes]]." className="display-m" /></div>
-            <Btn to="/packages" variant="outline">View all packages</Btn>
-          </div>
-          <PackagesGrid />
-        </div>
-      </section>
-
-      {/* GALLERY BENTO */}
-      <section className="section-sm bg-ivory">
-        <div className="container">
-          <div className="section-head">
-            <div><Eyebrow>Moments</Eyebrow><Split text="Captured at [[G Arena]] & LE Comfort." className="display-m" /></div>
-            <Btn to="/gallery" variant="outline">Open gallery</Btn>
-          </div>
-          <div className="bento">
-            <Pic k="poolAerial" w={1200} className="b-a rv-img" />
-            <Pic k="banquetHall" w={900} className="b-b rv-img" />
-            <div className="b-d tile-text rv"><Icon name="leaf" size={28} /><div style={{ fontFamily: 'var(--f-display)', fontSize: 24, lineHeight: 1.1 }}>12 years of memories</div></div>
-            <Pic k="biryani2" w={600} className="b-e rv-img" />
-            <Pic k="beachHut" w={900} className="b-c rv-img" />
-            <div className="b-f tile-text alt rv"><span className="label">Follow us</span><div style={{ fontFamily: 'var(--f-display)', fontSize: 28 }}>@garena.lecomfort</div></div>
-            <Pic k="kid" w={600} className="b-d rv-img" />
-            <Pic k="roomView" w={900} className="b-e rv-img" />
-          </div>
-        </div>
-      </section>
-
       {/* TESTIMONIALS */}
-      <section className="section"><div className="container"><Testimonials /></div></section>
+      <section className="section-sm bg-ivory"><div className="container"><Testimonials /></div></section>
 
       <CtaBand video={VID.water} />
     </>

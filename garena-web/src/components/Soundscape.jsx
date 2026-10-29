@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 /* Live ambient soundscapes synthesised with the Web Audio API — no audio files needed. */
 
 const MODES = {
-  rain: 'Monsoon rain', waves: 'Ocean waves', forest: 'Forest dawn', pool: 'Poolside',
+  calm: 'Calm lake', rain: 'Soft rain', waves: 'Ocean waves', forest: 'Forest dawn', pool: 'Poolside',
   waterfall: 'Hill waterfall', cafe: 'Restaurant', party: 'Celebration',
 };
 
@@ -36,35 +36,55 @@ function gain(ctx, v) { const g = ctx.createGain(); g.gain.value = v; return g; 
 
 function buildRain(ctx, out, bufs) {
   const nodes = [], timers = [];
-  // Steady downpour hiss
-  const hp = filter(ctx, 'highpass', 500), lp = filter(ctx, 'lowpass', 7000), g = gain(ctx, 0.22);
+  // Light, soft drizzle — no thunder, no harsh highs
+  const hp = filter(ctx, 'highpass', 900), lp = filter(ctx, 'lowpass', 3800), g = gain(ctx, 0.06);
   hp.connect(lp).connect(g).connect(out);
   nodes.push(loopNoise(ctx, bufs.white, hp));
-  // Low roof rumble
-  const rl = filter(ctx, 'lowpass', 260), rg = gain(ctx, 0.35);
+  const rl = filter(ctx, 'lowpass', 300), rg = gain(ctx, 0.08);
   rl.connect(rg).connect(out);
   nodes.push(loopNoise(ctx, bufs.brown, rl));
-  // Individual droplets on leaves
+  // Sparse, gentle drops on leaves
   const drop = () => {
     const t = ctx.currentTime;
     const s = ctx.createBufferSource(); s.buffer = bufs.white;
-    const bp = filter(ctx, 'bandpass', 1800 + Math.random() * 4200, 6);
+    const bp = filter(ctx, 'bandpass', 1500 + Math.random() * 2000, 8);
     const e = gain(ctx, 0);
-    e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(0.25 + Math.random() * 0.35, t + 0.004); e.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
-    s.connect(bp).connect(e).connect(out); s.start(t, Math.random() * 3); s.stop(t + 0.08);
-    timers.push(setTimeout(drop, 15 + Math.random() * 70));
+    e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(0.06 + Math.random() * 0.06, t + 0.006); e.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
+    s.connect(bp).connect(e).connect(out); s.start(t, Math.random() * 3); s.stop(t + 0.09);
+    timers.push(setTimeout(drop, 120 + Math.random() * 380));
   };
   drop();
-  // Distant thunder every so often
-  const thunder = () => {
-    const t = ctx.currentTime;
-    const s = ctx.createBufferSource(); s.buffer = bufs.brown;
-    const lpf = filter(ctx, 'lowpass', 120); const e = gain(ctx, 0);
-    e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(1.1, t + 0.8); e.gain.exponentialRampToValueAtTime(0.001, t + 6);
-    s.connect(lpf).connect(e).connect(out); s.start(t); s.stop(t + 6.2);
-    timers.push(setTimeout(thunder, 18000 + Math.random() * 20000));
+  return () => { nodes.forEach(n => n.stop()); timers.forEach(clearTimeout); };
+}
+
+/* Simple, clean ambience: still water, a soft breeze and slow wind-chime notes */
+function buildCalm(ctx, out, bufs) {
+  const nodes = [], timers = [];
+  const lp = filter(ctx, 'lowpass', 380), g = gain(ctx, 0.07);
+  lp.connect(g).connect(out); nodes.push(loopNoise(ctx, bufs.brown, lp));
+  const lfo = ctx.createOscillator(), lg = gain(ctx, 0.03);
+  lfo.frequency.value = 0.08; lfo.connect(lg).connect(g.gain); lfo.start(); nodes.push(lfo);
+  const notes = [523.25, 587.33, 659.25, 783.99, 880, 1046.5]; // C major pentatonic
+  const chime = () => {
+    const t = ctx.currentTime, f = notes[Math.floor(Math.random() * notes.length)];
+    const o = ctx.createOscillator(), e = gain(ctx, 0);
+    o.type = 'sine'; o.frequency.value = f;
+    e.gain.setValueAtTime(0, t); e.gain.linearRampToValueAtTime(0.022, t + 0.02); e.gain.exponentialRampToValueAtTime(0.0005, t + 4);
+    o.connect(e).connect(out); o.start(t); o.stop(t + 4.1);
+    timers.push(setTimeout(chime, 2200 + Math.random() * 3800));
   };
-  timers.push(setTimeout(thunder, 6000));
+  timers.push(setTimeout(chime, 800));
+  const bird = () => {
+    const t = ctx.currentTime, base = 3000 + Math.random() * 1200;
+    for (let k = 0; k < 2; k++) {
+      const st = t + k * 0.14, o = ctx.createOscillator(), e = gain(ctx, 0);
+      o.frequency.setValueAtTime(base, st); o.frequency.exponentialRampToValueAtTime(base * 1.25, st + 0.07);
+      e.gain.setValueAtTime(0, st); e.gain.linearRampToValueAtTime(0.012, st + 0.015); e.gain.exponentialRampToValueAtTime(0.0005, st + 0.1);
+      o.connect(e).connect(out); o.start(st); o.stop(st + 0.12);
+    }
+    timers.push(setTimeout(bird, 6000 + Math.random() * 8000));
+  };
+  timers.push(setTimeout(bird, 3000));
   return () => { nodes.forEach(n => n.stop()); timers.forEach(clearTimeout); };
 }
 
@@ -235,13 +255,13 @@ function buildParty(ctx, out, bufs) {
   return () => { nodes.forEach(n => n.stop()); timers.forEach(clearTimeout); };
 }
 
-const BUILDERS = { rain: buildRain, waves: buildWaves, forest: buildForest, pool: buildPool, waterfall: buildWaterfall, cafe: buildCafe, party: buildParty };
+const BUILDERS = { calm: buildCalm, rain: buildRain, waves: buildWaves, forest: buildForest, pool: buildPool, waterfall: buildWaterfall, cafe: buildCafe, party: buildParty };
 
 // Each page has its own mood
 const PAGE_SOUND = {
-  '/': 'rain', '/g-arena': 'forest', '/le-comfort': 'waves', '/destinations': 'waves', '/dining': 'cafe',
-  '/celebrations': 'party', '/packages': 'pool', '/booking': 'rain', '/gallery': 'forest', '/our-story': 'forest',
-  '/contact': 'rain', '/legal': 'rain',
+  '/': 'calm', '/g-arena': 'forest', '/le-comfort': 'waves', '/destinations': 'waves', '/dining': 'cafe',
+  '/celebrations': 'party', '/packages': 'pool', '/booking': 'calm', '/gallery': 'forest', '/our-story': 'forest',
+  '/contact': 'calm', '/legal': 'calm',
 };
 const LOCATION_SOUND = {
   suryapet: 'pool', kamareddy: 'pool', palamaneru: 'forest', nagari: 'waterfall', dvsatram: 'forest',
@@ -251,7 +271,7 @@ const LOCATION_SOUND = {
 function modeFor(path) {
   const id = path.split('/')[2];
   if (path.startsWith('/destinations/') && LOCATION_SOUND[id]) return LOCATION_SOUND[id];
-  return PAGE_SOUND[path] || 'rain';
+  return PAGE_SOUND[path] || 'calm';
 }
 
 export default function Soundscape() {
@@ -286,7 +306,7 @@ export default function Soundscape() {
     const bus = ctx.createGain(); bus.gain.value = 0; bus.connect(master);
     const stop = BUILDERS[mode](ctx, bus, bufs.current);
     const t = ctx.currentTime;
-    master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(master.gain.value, t); master.gain.linearRampToValueAtTime(0.55, t + 1.5);
+    master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(master.gain.value, t); master.gain.linearRampToValueAtTime(0.4, t + 2.5);
     bus.gain.linearRampToValueAtTime(1, t + 2);
     stopRef.current = () => {
       const n = ctx.currentTime;

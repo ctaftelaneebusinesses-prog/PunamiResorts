@@ -1,0 +1,215 @@
+/* ---------- Home: compact sections ---------- */
+.stat-strip { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: -46px; position: relative; z-index: 5; background: var(--paper); border-radius: 24px; box-shadow: var(--shadow); overflow: hidden; }
+.stat-strip > div { padding: 20px 22px; display: flex; align-items: baseline; gap: 10px; border-right: 1px solid var(--line); }
+.stat-strip > div:last-child { border-right: 0; }
+.stat-strip b { font-family: var(--f-display); font-weight: 400; font-size: clamp(2rem, 3.2vw, 3rem); line-height: 1; color: var(--primary); }
+.stat-strip b sup { font-size: .45em; color: var(--accent); }
+.stat-strip span { font-size: 13px; color: var(--muted); }
+
+.xp-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+.xp-card { position: relative; aspect-ratio: 3/4; border-radius: 22px; overflow: hidden; color: #fff; display: flex; align-items: flex-end; isolation: isolate; }
+.xp-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; transition: transform 1.2s var(--ease); }
+.xp-card::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, transparent 40%, rgba(0, 0, 0, .78)); }
+.xp-card:hover img { transform: scale(1.07); }
+.xp-body { padding: 18px; display: flex; flex-direction: column; }
+.xp-k { font-family: var(--f-display); font-style: italic; color: var(--leaf-soft); font-size: 18px; }
+.xp-t { font-family: var(--f-display); font-size: 26px; line-height: 1.05; }
+.xp-d { font-size: 12.5px; opacity: .8; margin-top: 4px; }
+
+/* ==========================================================================
+   Phone polish (≤ 600px) — the client reviews on mobile first
+   ========================================================================== */
+@media (max-width: 900px) {
+  .xp-row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter) 6px; scrollbar-width: none; }
+  .xp-row::-webkit-scrollbar { display: none; }
+  .xp-card { flex: none; width: 62vw; max-width: 260px; scroll-snap-align: start; }
+  .stat-strip { grid-template-columns: repeat(2, 1fr); }
+  .stat-strip > div:nth-child(2) { border-right: 0; }
+  .stat-strip > div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+}
+
+@media (max-width: 600px) {
+  :root { --gutter: 18px; --radius: 18px; --radius-lg: 24px; }
+  body { font-size: 15px; }
+  .section { padding: 64px 0; }
+  .section-sm { padding: 48px 0; }
+  .section-head { margin-bottom: 28px; gap: 16px; }
+  .section-head .lead { font-size: 15px; }
+  .display-xl { font-size: clamp(2.9rem, 14vw, 4rem); }
+  .display-l { font-size: clamp(2.4rem, 11vw, 3.2rem); }
+  .display-m { font-size: clamp(2rem, 9vw, 2.6rem); }
+  .lead { font-size: 15.5px; }
+  .eyebrow { font-size: 11px; letter-spacing: .26em; }
+  .eyebrow::before { width: 22px; }
+
+  /* Header: compact pill */
+  .site-header .bar { margin: 10px 12px 0; padding: 6px 6px 6px 14px; }
+  .brand-lockup img { height: 32px; }
+  .icon-btn { width: 42px; height: 42px; }
+
+  /* Hero */
+  .hero { min-height: 100svh; }
+  .hero-inner { padding-top: 110px; padding-bottom: 22px; }
+  .hero-bottom { margin-top: 16px; }
+  .hero .booking-bar { padding: 6px; border-radius: 20px; grid-template-columns: 1fr 1fr; }
+  .booking-bar .bb-field { padding: 10px 12px; }
+  .booking-bar .bb-field:nth-child(odd) { border-right: 1px solid rgba(255, 255, 255, .14); }
+  .booking-bar.light .bb-field:nth-child(odd) { border-right-color: var(--line); }
+  .booking-bar label { font-size: 9.5px; }
+  .booking-bar select, .booking-bar input { font-size: 14px; }
+  .booking-bar .btn { margin-top: 6px; border-radius: 16px; }
+  .page-hero { min-height: 72svh; }
+  .page-hero .hero-inner { padding-bottom: 40px; }
+  .crumbs { margin-bottom: 14px; }
+
+  .stat-strip { margin-top: -26px; border-radius: 18px; }
+  .stat-strip > div { padding: 14px 16px; flex-direction: column; gap: 2px; }
+  .stat-strip b { font-size: 2rem; }
+
+  /* Brand portal */
+  .portal-panel, .portal:hover .portal-panel, .portal .portal-panel:hover { min-height: 460px; padding: 22px; }
+  .portal-panel h3 { font-size: 2.8rem; }
+  .portal-panel .p-logo { height: 56px; }
+  .portal-panel .p-desc { font-size: 14px; margin: 10px 0 16px; }
+  .portal-panel .p-locs { margin-bottom: 18px; }
+  .pill { padding: 6px 11px; font-size: 11.5px; }
+
+  /* Destination cards */
+  .hscroll-track { padding: 0 18px; scroll-snap-type: x mandatory; }
+  .dest-card { width: 76vw; scroll-snap-align: start; }
+  .dest-card .meta { padding: 18px; }
+  .dest-card .no { font-size: 46px; }
+  .dest-card h3 { font-size: 2rem; }
+  .dest-card .go { width: 44px; height: 44px; }
+  .hscroll-progress { display: none; }
+
+  /* Testimonials & CTA */
+  .testi-quote { font-size: 1.55rem; min-height: 0; }
+  .rating-card { padding: 16px; gap: 14px; }
+  .rating-card .big { font-size: 46px; }
+  .cta-band { padding: 56px 20px; }
+  .cta-band .actions { flex-direction: column; align-items: stretch; }
+  .cta-band .actions .btn { justify-content: space-between; }
+
+  /* Buttons fill the row on phones where they sit in groups */
+  .btn { font-size: 14px; }
+
+  /* Location page */
+  .loc-switch a { padding: 8px 13px; font-size: 12px; }
+  .hero-offers { gap: 6px; margin-top: 18px; }
+  .hero-offers button { padding: 9px 13px; font-size: 12.5px; }
+  .quick-facts .v { font-size: 26px; }
+  .quick-facts > div { padding: 16px; }
+  .policy-list .v { font-size: 21px; }
+  .sticky-book { padding: 20px; }
+  .facility-strip span { font-size: 12px; padding: 7px 11px; }
+
+  /* Floating controls stay small */
+  .wa-float { right: 14px; bottom: 14px; }
+  .wa-float a.wa { width: 52px; height: 52px; }
+  .soundscape { left: 14px; bottom: 14px; }
+  .sound-main { padding: 13px; }
+  .sound-hint { max-width: 210px; padding: 12px 14px; }
+  .sound-hint b { font-size: 16px; }
+  body:has(.action-dock) .wa-float, body:has(.action-dock) .soundscape { bottom: 82px; }
+  .action-dock { bottom: 12px; }
+}
+
+/* Phone hero: two clear actions instead of the 4-field bar */
+.hero-m-cta { display: none; }
+@media (max-width: 600px) {
+  .hero-bar-desk { display: none; }
+  .hero-m-cta { display: grid; gap: 10px; }
+  .hero-m-cta .btn { justify-content: space-between; width: 100%; }
+  .hero-m-cta .btn-outline { justify-content: center; color: #fff; padding: 16px; }
+  .hero-inner { padding-bottom: 92px; }
+  .sound-hint { display: none; }
+  .hero .lead { font-size: 15px; }
+}
+
+/* ---------- Phone: second pass ---------- */
+@media (max-width: 600px) {
+  /* Location offer tiles */
+  .offer-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: 170px; gap: 10px; }
+  .offer-tile { padding: 14px; border-radius: 18px; }
+  .offer-tile.wide { grid-column: span 2; }
+  .ot-icon { top: 12px; left: 12px; width: 36px; height: 36px; border-radius: 11px; }
+  .ot-icon svg { width: 18px; height: 18px; }
+  .ot-title, .offer-tile.wide .ot-title { font-size: 20px; line-height: 1.1; }
+  .offer-tile.wide .ot-title { font-size: 26px; }
+  .ot-short { font-size: 12px; }
+  .ot-cta { display: none; }
+
+  /* Quick facts */
+  .quick-facts .label { font-size: 10px; letter-spacing: .18em; }
+  .quick-facts .v { font-size: 22px; }
+  .quick-facts .v small { font-size: 11.5px; }
+
+  /* Location gallery becomes a swipe row */
+  .loc-strip { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter); gap: 10px; scrollbar-width: none; }
+  .loc-strip::-webkit-scrollbar { display: none; }
+  .loc-strip .frame { flex: none; width: 64vw; aspect-ratio: 4/5; scroll-snap-align: start; }
+
+  /* Destination finder: one swipeable row of filters */
+  .finder-bar { padding: 10px; border-radius: 18px; gap: 10px; }
+  .finder-bar .filters { flex-wrap: nowrap; overflow-x: auto; width: 100%; scrollbar-width: none; padding-bottom: 2px; }
+  .finder-bar .filters::-webkit-scrollbar { display: none; }
+  .finder-bar .chip { flex: none; padding: 8px 14px; font-size: 12.5px; }
+  .view-toggle { width: 100%; }
+  .view-toggle button { flex: 1; }
+  .dx-stage { height: 480px; }
+  .dx-name { font-size: 2.8rem; }
+  .dx-row { min-height: 56px; grid-template-columns: 40px 1fr 54px; padding: 0 10px; }
+  .dx-row-name { font-size: 1.5rem; }
+  .dx-row-thumb { width: 54px; height: 42px; }
+
+  /* Booking wizard */
+  .choice-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .choice .c-body { padding: 10px 12px; }
+  .choice .c-body b { font-size: 18px; }
+  .choice .c-body span { font-size: 11px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .type-choice { padding: 16px; gap: 10px; }
+  .type-choice .ic { width: 44px; height: 44px; }
+  .type-choice b { font-size: 21px !important; }
+  .steps li .n { width: 34px; height: 34px; font-size: 16px; }
+  .display-s { font-size: 1.7rem; }
+  .date-chip { width: 64px; padding: 10px 0; }
+  .date-chip .d { font-size: 24px; }
+  .wizard .grid-2 { grid-template-columns: 1fr !important; }
+
+  /* Dining */
+  .dish-body h4 { font-size: 19px; }
+  .dish-body .p { font-size: 20px; }
+  .dish-body p { font-size: 12.5px; }
+  .tabs { width: 100%; }
+  .tabs button { flex: 1; padding: 9px 12px; font-size: 13px; }
+  .table-card-head { height: 120px; }
+
+  /* Generic two-image collages stay tidy */
+  .grid-2 > div[style*="grid-template-columns: 1fr .8fr"], .grid-2 > div[style*="grid-template-columns: 1fr 1fr"] { gap: 10px !important; }
+}
+
+/* ---------- Phone: card grids stay compact ---------- */
+@media (max-width: 600px) {
+  .grid-4 { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid-4 .card .frame.ratio-45 { aspect-ratio: 1; }
+  .grid-4 .card-body { padding: 14px; }
+  .grid-4 .card-body h3 { font-size: 20px !important; }
+  .grid-4 .card-body p { font-size: 12.5px !important; }
+  .grid-4 .amenity { padding: 16px !important; }
+  .grid-4 .amenity h4 { font-size: 21px !important; }
+  .grid-4 .amenity p { font-size: 12.5px !important; }
+  /* Packages and contact cards read better as swipe rows / single column */
+  .grid-4:has(.pkg-card), .grid-3:has(.pkg-card) { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter) 8px; gap: 12px; scrollbar-width: none; }
+  .grid-4:has(.pkg-card) .pkg-card, .grid-3:has(.pkg-card) .pkg-card { flex: none; width: 80vw; scroll-snap-align: start; }
+  .grid-4:has(.contact-card) { grid-template-columns: 1fr; }
+  .pkg-card h3 { font-size: 26px; }
+  .pkg-card .price { font-size: 36px; }
+}
+@media (max-width: 600px) {
+  .masonry { columns: 2; column-gap: 8px; }
+  .masonry .m-item { margin-bottom: 8px; border-radius: 14px; }
+  .masonry .m-item .cap { display: none; }
+  .filters:has(.chip) { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 calc(var(--gutter) * -1); padding: 0 var(--gutter); }
+  .filters:has(.chip) .chip { flex: none; }
+}

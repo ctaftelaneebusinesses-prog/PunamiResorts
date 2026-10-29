@@ -5,6 +5,8 @@ import './styles.css';
 import './offers.css';
 import './footer.css';
 import './explorer.css';
+import './footer-lite.css';
+import './mobile.css';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import Brand from './pages/Brand';

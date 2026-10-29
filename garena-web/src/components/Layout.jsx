@@ -7,6 +7,7 @@ import Soundscape from './Soundscape';
 import { LOCATIONS, BRANDS, img } from '../data';
 
 const NAV = [
+  ['/', 'Home'],
   ['/destinations', 'Destinations', true],
   ['/dining', 'Dining'],
   ['/celebrations', 'Celebrations'],
@@ -111,7 +112,7 @@ function Header() {
                 </div>
               </div>
             ) : (
-              <NavLink key={to} to={to} className={({ isActive }) => isActive ? 'active' : ''}>{label}</NavLink>
+              <NavLink key={to} to={to} end={to === '/'} className={({ isActive }) => isActive ? 'active' : ''}>{label}</NavLink>
             ))}
           </nav>
           <div className="header-cta">
@@ -123,7 +124,6 @@ function Header() {
       </header>
       <div className={`mobile-menu ${open ? 'open' : ''}`}>
         <button className="icon-btn close" style={{ color: '#fff' }} onClick={() => setOpen(false)} aria-label="Close menu"><Icon name="close" /></button>
-        <Link className="big" to="/">Home</Link>
         {NAV.map(([to, label]) => <Link className="big" key={to} to={to}>{label}</Link>)}
         <Link className="big" to="/contact">Contact</Link>
         <Link className="big" to="/booking"><em>Reserve your visit</em></Link>
@@ -137,98 +137,53 @@ function Header() {
 
 function Footer() {
   return (
-    <footer className="site-footer">
+    <footer className="site-footer lite">
       <div className="container">
-        <div className="ft-cta">
-          <div>
-            <span className="eyebrow light">Reservations open daily</span>
-            <h2 className="ft-cta-title">Your next escape <em>starts here.</em></h2>
-          </div>
-          <div className="ft-cta-actions">
-            <Btn to="/booking" variant="light">Reserve your visit</Btn>
-            <a className="ft-call" href={`tel:${BRANDS.garena.phone}`}><Icon name="phone" size={18} /><span><small>Call reservations</small>{BRANDS.garena.phone}</span></a>
+        <div className="fl-cta">
+          <h2>Your next escape <em>starts here.</em></h2>
+          <div className="fl-cta-actions">
+            <Btn to="/booking" variant="light" size="sm">Reserve</Btn>
+            <a className="fl-icon" href={`tel:${BRANDS.garena.phone}`} aria-label="Call"><Icon name="phone" /></a>
+            <a className="fl-icon wa" href={`https://wa.me/${BRANDS.garena.whatsapp}`} target="_blank" rel="noreferrer" aria-label="WhatsApp"><Icon name="whatsapp" /></a>
           </div>
         </div>
-        <div className="ft-dests">
-          {LOCATIONS.map(l => (
-            <Link key={l.id} to={`/destinations/${l.id}`} className="ft-dest">
-              <img src={img(l.hero, 300)} alt="" loading="lazy" />
-              <span><b>{l.name}</b><small>{l.brand === 'garena' ? 'G Arena' : 'LE Comfort'}</small></span>
-            </Link>
-          ))}
-        </div>
-        <div className="footer-top">
-          <div>
-            <img src="./img/g-arena-logo-white.png" alt="G Arena" style={{ height: 96 }} />
-            <p style={{ maxWidth: '34ch', marginTop: 22 }}>Eight distinctive destinations across Telangana and Andhra Pradesh — leisure arenas by G Arena and boutique stays by LE Comfort.</p>
-            <form className="footer-news" onSubmit={e => e.preventDefault()}>
-              <input type="email" placeholder="Email for seasonal offers" aria-label="Email" />
-              <button>Subscribe</button>
-            </form>
+        <div className="fl-grid">
+          <div className="fl-brand">
+            <div className="fl-logos">
+              <Link to="/g-arena"><img src="./img/g-arena-mark-white.png" alt="G Arena" /></Link>
+              <span className="fl-sep" />
+              <Link to="/le-comfort" className="fl-lc">Le</Link>
+            </div>
+            <p>Leisure arenas by G Arena and boutique stays by LE Comfort — eight destinations across Telangana &amp; Andhra Pradesh.</p>
             <div className="socials">
-              {['instagram', 'facebook', 'youtube', 'whatsapp'].map(s => <a key={s} href="#" aria-label={s}><Icon name={s} /></a>)}
+              {['instagram', 'facebook', 'youtube'].map(s => <a key={s} href="#" aria-label={s}><Icon name={s} /></a>)}
             </div>
           </div>
           <div>
-            <h4>G Arena</h4>
-            <ul>{LOCATIONS.filter(l => l.brand === 'garena').map(l => <li key={l.id}><Link to={`/destinations/${l.id}`}>{l.name}</Link></li>)}</ul>
+            <h4>Destinations</h4>
+            <ul className="fl-two">{LOCATIONS.map(l => <li key={l.id}><Link to={`/destinations/${l.id}`}>{l.name.replace(' Beach', '')}</Link></li>)}</ul>
           </div>
           <div>
-            <h4>LE Comfort</h4>
-            <ul>{LOCATIONS.filter(l => l.brand === 'lecomfort').map(l => <li key={l.id}><Link to={`/destinations/${l.id}`}>{l.name}</Link></li>)}</ul>
-            <h4 style={{ marginTop: 32 }}>Explore</h4>
+            <h4>Explore</h4>
             <ul>
-              <li><Link to="/packages">Packages & Pricing</Link></li>
+              <li><Link to="/dining">Dining</Link></li>
               <li><Link to="/celebrations">Celebrations</Link></li>
-              <li><Link to="/gallery">Gallery</Link></li>
+              <li><Link to="/packages">Packages</Link></li>
+              <li><Link to="/our-story">Our Story</Link></li>
             </ul>
           </div>
           <div>
-            <h4>Reservations</h4>
+            <h4>Contact</h4>
             <ul>
               <li><a href={`tel:${BRANDS.garena.phone}`}>{BRANDS.garena.phone}</a></li>
               <li><a href={`mailto:${BRANDS.garena.email}`}>{BRANDS.garena.email}</a></li>
-              <li><Link to="/contact">Head Office · Kuppam, AP</Link></li>
-            </ul>
-            <h4 style={{ marginTop: 32 }}>Information</h4>
-            <ul>
-              <li><Link to="/our-story">Our Story</Link></li>
-              <li><Link to="/legal">Privacy · Terms · Cancellation</Link></li>
-              <li><Link to="/admin">Staff Login</Link></li>
+              <li><Link to="/contact">Kuppam, Andhra Pradesh</Link></li>
             </ul>
           </div>
         </div>
-      </div>
-      <div className="ft-names" aria-label="Our destinations">
-        <div className="ft-names-track">
-          {[0, 1].map(k => (
-            <span key={k} className="ft-names-set" aria-hidden={k === 1}>
-              {LOCATIONS.map((l, i) => (
-                <span key={l.id} className="ft-name-wrap">
-                  <Link to={`/destinations/${l.id}`} className={`ft-name ${i % 2 ? 'outline' : ''}`} tabIndex={k ? -1 : 0}>{l.name}</Link>
-                  <Icon name="leaf" />
-                </span>
-              ))}
-            </span>
-          ))}
-        </div>
-      </div>
-      <div className="container">
-        <div className="ft-duo">
-          <Link to="/g-arena" className="ft-duo-brand">
-            <img src="./img/g-arena-mark-white.png" alt="" />
-            <span><b>G Arena</b><small>Where nature hosts you · 5 destinations</small></span>
-          </Link>
-          <span className="ft-duo-line"><Icon name="leaf" /></span>
-          <Link to="/le-comfort" className="ft-duo-brand right">
-            <span><b>LE Comfort</b><small>Stay a little longer · 3 destinations</small></span>
-            <span className="ft-duo-lc">Le</span>
-          </Link>
-        </div>
-        <div className="footer-bottom">
-          <span>© 2026 G Arena & LE Comfort. All rights reserved.</span>
-          <span className="preview-note"><Icon name="info" size={14} /> Design preview — imagery and details are indicative.</span>
-          <span>Crafted by <a href="#">CraftLanee</a></span>
+        <div className="fl-bottom">
+          <span>© 2026 G Arena &amp; LE Comfort</span>
+          <span className="fl-links"><Link to="/legal">Privacy &amp; Terms</Link><Link to="/admin">Staff login</Link><span>Crafted by CraftLanee</span></span>
         </div>
       </div>
     </footer>
