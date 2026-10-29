@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from './Icon';
 import { img } from '../data';
@@ -51,8 +52,26 @@ export function Pic({ k, w = 1400, alt = '', className = '', reveal, parallax, s
   );
 }
 
+/* Background video that starts reliably after client-side navigation.
+   Mobile browsers only autoplay when the element is muted *before* play(),
+   and React does not reflect `muted` as an attribute — so set it by hand. */
 export function BgVideo({ src, poster }) {
-  return <video src={src} poster={poster} autoPlay muted loop playsInline preload="metadata" />;
+  const ref = useRef();
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    v.muted = true; v.defaultMuted = true;
+    v.setAttribute('muted', ''); v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', '');
+    v.load();
+    const tryPlay = () => v.play().catch(() => {});
+    tryPlay();
+    v.addEventListener('canplay', tryPlay, { once: true });
+    // If the browser still blocked it, start on the first touch anywhere
+    const onTouch = () => tryPlay();
+    window.addEventListener('touchstart', onTouch, { once: true, passive: true });
+    return () => { v.removeEventListener('canplay', tryPlay); window.removeEventListener('touchstart', onTouch); };
+  }, [src]);
+  return <video key={src} ref={ref} src={src} poster={poster} autoPlay muted loop playsInline preload="auto" />;
 }
 
 export function Stars({ n = 5 }) {

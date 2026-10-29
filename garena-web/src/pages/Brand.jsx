@@ -6,7 +6,7 @@ import { BRANDS, LOCATIONS, PACKAGES, VID } from '../data';
 
 const COPY = {
   garena: {
-    hero: 'poolPalms', video: VID.lake, title: 'G [[Arena]]',
+    hero: 'poolPalms', video: VID.greenCoast, title: 'G [[Arena]]',
     intro: 'Born from a simple idea — that the best celebrations happen outdoors, under open skies and among trees.',
     story: 'Since 2014, G Arena has grown from a single family pool garden into five leisure destinations across Telangana and Andhra Pradesh. Each arena pairs landscaped lawns and pools with a family restaurant and a celebration venue, so a single visit can hold a swim, a feast and a party.',
     pillars: [['pool', 'Open-air leisure', 'Pools, lawns and play areas designed for full-day family outings.'], ['cake', 'Celebrations', 'Party halls and lawns for 50 to 500 guests, with décor and catering included.'], ['utensils', 'Family dining', 'Regional Telugu cuisine, buffets and live counters at every arena.'], ['leaf', 'Rooted in nature', 'Mature trees, native planting and wide green spaces at every property.']],

@@ -57,17 +57,17 @@ export const IMG = {
 export const img = (key, w) => U(IMG[key], w);
 
 export const VID = {
-  lake: 'https://assets.mixkit.co/videos/1218/1218-1080.mp4',
-  canopy: 'https://assets.mixkit.co/videos/1188/1188-1080.mp4',
-  forest: 'https://assets.mixkit.co/videos/50845/50845-1080.mp4',
-  waterfall: 'https://assets.mixkit.co/videos/2213/2213-1080.mp4',
-  greenCoast: 'https://assets.mixkit.co/videos/44391/44391-1080.mp4',
-  waves: 'https://assets.mixkit.co/videos/5016/5016-1080.mp4',
-  water: 'https://assets.mixkit.co/videos/1164/1164-1080.mp4',
-  hillsLake: 'https://assets.mixkit.co/videos/5001/5001-1080.mp4',
-  beachAerial: 'https://videos.pexels.com/video-files/1739010/1739010-hd_1920_1080_30fps.mp4',
-  coastAerial: 'https://videos.pexels.com/video-files/2169880/2169880-hd_1920_1080_30fps.mp4',
-  wavesAerial: 'https://videos.pexels.com/video-files/1409899/1409899-hd_1920_1080_25fps.mp4',
+  lake: 'https://assets.mixkit.co/videos/1218/1218-720.mp4',
+  canopy: 'https://assets.mixkit.co/videos/1188/1188-720.mp4',
+  forest: 'https://assets.mixkit.co/videos/50845/50845-720.mp4',
+  waterfall: 'https://assets.mixkit.co/videos/2213/2213-720.mp4',
+  greenCoast: 'https://assets.mixkit.co/videos/44391/44391-720.mp4',
+  waves: 'https://assets.mixkit.co/videos/5016/5016-720.mp4',
+  water: 'https://assets.mixkit.co/videos/1164/1164-720.mp4',
+  hillsLake: 'https://assets.mixkit.co/videos/5001/5001-720.mp4',
+  beachAerial: 'https://videos.pexels.com/video-files/1739010/1739010-sd_960_540_30fps.mp4',
+  coastAerial: 'https://assets.mixkit.co/videos/4994/4994-720.mp4',
+  wavesAerial: 'https://videos.pexels.com/video-files/1409899/1409899-hd_1280_720_25fps.mp4',
 };
 
 export const BRANDS = {
@@ -103,7 +103,7 @@ export const LOCATIONS = [
     hours: { open: 6, close: 22, label: '6:00 AM – 10:00 PM · All days' },
     phone: '+91 90000 10001', email: 'suryapet@garena.in', coords: [17.14, 79.62],
     theme: { primary: '#0B4D23', accent: '#97B04C', soft: '#EEF2E1' },
-    hero: 'poolPalms', video: VID.lake,
+    hero: 'poolPalms', video: VID.coastAerial,
     gallery: ['poolPalms', 'poolAerial', 'banquetHall', 'friendsDining', 'playground', 'poolDusk', 'thali', 'fairyLights'],
     stats: { tables: 48, seats: 320, rooms: 18, slot: '2 hrs' },
     rooms: [

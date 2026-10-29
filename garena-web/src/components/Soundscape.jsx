@@ -302,16 +302,16 @@ export default function Soundscape() {
       bufs.current = { white: noiseBuffer(ctx, 'white'), brown: noiseBuffer(ctx, 'brown') };
     }
     const ctx = ctxRef.current, master = masterRef.current;
-    ctx.resume();
+    if (ctx.state !== "running") ctx.resume();
     const bus = ctx.createGain(); bus.gain.value = 0; bus.connect(master);
     const stop = BUILDERS[mode](ctx, bus, bufs.current);
     const t = ctx.currentTime;
-    master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(master.gain.value, t); master.gain.linearRampToValueAtTime(0.4, t + 2.5);
-    bus.gain.linearRampToValueAtTime(1, t + 2);
+    master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(master.gain.value, t); master.gain.linearRampToValueAtTime(0.4, t + 1);
+    bus.gain.setValueAtTime(0, t); bus.gain.linearRampToValueAtTime(1, t + 0.6);
     stopRef.current = () => {
       const n = ctx.currentTime;
-      bus.gain.cancelScheduledValues(n); bus.gain.setValueAtTime(bus.gain.value, n); bus.gain.linearRampToValueAtTime(0, n + 1.2);
-      setTimeout(() => { stop(); bus.disconnect(); }, 1300);
+      bus.gain.cancelScheduledValues(n); bus.gain.setValueAtTime(bus.gain.value, n); bus.gain.linearRampToValueAtTime(0, n + 0.5);
+      setTimeout(() => { stop(); bus.disconnect(); }, 600);
     };
     return () => stopRef.current?.();
   }, [on, mode]);

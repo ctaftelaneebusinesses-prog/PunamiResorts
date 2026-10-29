@@ -71,7 +71,7 @@ export default function Destinations() {
 
   return (
     <>
-      <PageHero title="Find your [[destination]]." eyebrow="8 destinations · 2 states" image="poolAerial" video={VID.coastAerial} crumbs="Destinations"
+      <PageHero title="Find your [[destination]]." eyebrow="8 destinations · 2 states" image="poolAerial" video={VID.wavesAerial} crumbs="Destinations"
         lead="Filter by brand or by the facilities that matter to you, then explore each destination in detail." />
 
       <section className="section">
