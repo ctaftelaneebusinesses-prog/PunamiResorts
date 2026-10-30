@@ -302,6 +302,14 @@ const LOCATION_SOUND = {
   kuppam: 'rain', mypadu: 'waves', revupolavaram: 'cove',
 };
 
+// Volume follows the scroll: loudest over the hero video, a quiet bed further down
+const VOL_MAX = 0.6, VOL_MIN = 0.1;
+function scrollLevel() {
+  const p = Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * 1.1)));
+  const eased = 1 - Math.pow(1 - p, 2);
+  return VOL_MAX - (VOL_MAX - VOL_MIN) * eased;
+}
+
 function modeFor(path) {
   const id = path.split('/')[2];
   if (path.startsWith('/destinations/') && LOCATION_SOUND[id]) return LOCATION_SOUND[id];
@@ -349,7 +357,7 @@ export default function Soundscape() {
     const bus = ctx.createGain(); bus.gain.value = 0; bus.connect(master);
     const stop = BUILDERS[mode](ctx, bus, bufs.current);
     const t = ctx.currentTime;
-    master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(master.gain.value, t); master.gain.linearRampToValueAtTime(0.4, t + 1);
+    master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(master.gain.value, t); master.gain.linearRampToValueAtTime(scrollLevel(), t + 1);
     bus.gain.setValueAtTime(0, t); bus.gain.linearRampToValueAtTime(1, t + 0.6);
     stopRef.current = () => {
       const n = ctx.currentTime;
@@ -359,6 +367,23 @@ export default function Soundscape() {
     return () => stopRef.current?.();
   }, [on, mode, unlocked]);
 
+  // Fade the volume with scroll position (smoothed so fast scrolling never clicks)
+  useEffect(() => {
+    if (!on || !unlocked) return;
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const ctx = ctxRef.current, master = masterRef.current;
+        if (!ctx || !master) return;
+        master.gain.cancelScheduledValues(ctx.currentTime);
+        master.gain.setTargetAtTime(scrollLevel(), ctx.currentTime, 0.25);
+      });
+    };
+    addEventListener('scroll', onScroll, { passive: true });
+    return () => { removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
+  }, [on, unlocked]);
+
   // Pause when the tab is hidden
   useEffect(() => {
     const v = () => { const c = ctxRef.current; if (!c) return; document.hidden ? c.suspend() : on && c.resume(); };
@@ -366,7 +391,6 @@ export default function Soundscape() {
     return () => document.removeEventListener('visibilitychange', v);
   }, [on]);
 
-  const pick = m => { setMode(m); if (!on) toggle(); };
   const waiting = on && !unlocked;
 
   return (
@@ -379,13 +403,8 @@ export default function Soundscape() {
       )}
       <button className="sound-main" onClick={() => { if (!waiting && Date.now() - unlockedAt.current > 500) toggle(); }} aria-label={on ? 'Mute ambient sound' : 'Play ambient sound'} data-cursor={on ? 'Mute' : 'Listen'}>
         <span className="eq"><i /><i /><i /><i /><i /></span>
-        <span className="sound-label">{waiting ? 'Tap for sound' : on ? MODES[mode] : 'Sound off'}</span>
+        <span className="sound-label">{on ? 'Sound on' : 'Sound off'}</span>
       </button>
-      <div className="sound-modes">
-        {Object.entries(MODES).map(([k, t]) => (
-          <button key={k} className={on && mode === k ? 'on' : ''} onClick={() => pick(k)}>{t}</button>
-        ))}
-      </div>
     </div>
   );
 }
